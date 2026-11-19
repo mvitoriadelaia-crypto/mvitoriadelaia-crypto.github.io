@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="theme-color" content="#0A0E27">
+<title>Mestre das Competências</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0A0E27;--cyan:#00F0FF;--lime:#B4FF39;--magenta:#FF2E9A;--green:#39FF88;--orange:#FF6B4A;--text:#E8ECFF;--muted:#8A90B8;--card:#151A3A;--radius:16px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;height:100%}
+body{background:radial-gradient(circle at 20% 0%,#1a1f4a 0%,var(--bg) 55%,#06081a 100%);color:var(--text);font-family:'Montserrat',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);overflow-x:hidden}
+#app{width:100%;max-width:480px;padding:16px;flex:1;display:flex;flex-direction:column}
+.screen{display:none;flex-direction:column;gap:16px;animation:fade .35s ease}
+.screen.active{display:flex}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+h1,h2,h3{font-family:'Space Grotesk',sans-serif;margin:0;letter-spacing:-.5px}
+h1{font-size:2rem;font-weight:700;text-align:center;line-height:1.1}
+h2{font-size:1.4rem;font-weight:600}
+.neon-cyan{color:var(--cyan);text-shadow:0 0 12px rgba(0,240,255,.7)}
+.neon-magenta{color:var(--magenta);text-shadow:0 0 12px rgba(255,46,154,.7)}
+.muted{color:var(--muted);font-size:.85rem}
+.btn{font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:600;padding:16px 20px;min-height:52px;border-radius:var(--radius);border:2px solid var(--cyan);background:rgba(0,240,255,.08);color:var(--cyan);cursor:pointer;transition:.18s;width:100%}
+.btn:active{transform:scale(.97);box-shadow:0 0 20px rgba(0,240,255,.5);background:rgba(0,240,255,.2)}
+.btn.primary{background:var(--cyan);color:#06081a;border-color:var(--cyan);box-shadow:0 0 24px rgba(0,240,255,.5)}
+.btn.primary:active{background:var(--lime);border-color:var(--lime)}
+.btn.magenta{border-color:var(--magenta);color:var(--magenta);background:rgba(255,46,154,.08)}
+.btn.ghost{border-color:var(--muted);color:var(--muted);background:transparent}
+.btn.small{min-height:44px;padding:10px 14px;font-size:.9rem}
+.logo-wrap{text-align:center;padding:32px 0 8px}
+.logo-wrap .sub{font-size:.8rem;letter-spacing:4px;color:var(--muted);text-transform:uppercase;margin-bottom:8px}
+.logo-wrap h1{font-size:2.2rem;line-height:1.05}
+.logo-glow{position:relative;display:inline-block}
+.logo-glow::after{content:'';position:absolute;inset:-20px;background:radial-gradient(circle,rgba(0,240,255,.25),transparent 70%);z-index:-1;filter:blur(12px)}
+.home-stats{display:flex;gap:8px;justify-content:center;margin:8px 0 16px}
+.stat-pill{background:var(--card);border:1px solid rgba(0,240,255,.25);padding:8px 14px;border-radius:999px;font-size:.8rem;color:var(--cyan);font-family:'Space Grotesk',sans-serif;font-weight:600}
+.materia-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.materia-card{background:var(--card);border:1.5px solid rgba(0,240,255,.2);border-radius:var(--radius);padding:18px 12px;min-height:110px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;transition:.18s}
+.materia-card:active{transform:scale(.97);border-color:var(--cyan);box-shadow:0 0 18px rgba(0,240,255,.35)}
+.materia-card .emoji{font-size:1.6rem}
+.materia-card .nome{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:.95rem;margin-top:8px}
+.materia-card .prog{font-size:.72rem;color:var(--muted);margin-top:4px}
+.fase-grid{display:flex;flex-direction:column;gap:10px}
+.fase-card{background:var(--card);border:1.5px solid rgba(0,240,255,.2);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:.18s;min-height:64px}
+.fase-card:active{transform:scale(.98);border-color:var(--cyan)}
+.fase-card.locked{opacity:.4;cursor:not-allowed}
+.fase-card .info{display:flex;flex-direction:column}
+.fase-card .fname{font-family:'Space Grotesk',sans-serif;font-weight:600}
+.fase-card .stars{font-size:.95rem;margin-top:2px}
+.fase-card .lock{font-size:1.3rem}
+.top-bar{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.top-bar .meta{font-size:.78rem;color:var(--muted);font-family:'Space Grotesk',sans-serif}
+.progress-track{height:6px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;margin-top:8px}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--lime));width:0;transition:.4s;box-shadow:0 0 12px var(--cyan)}
+.pergunta-box{background:var(--card);border:1.5px solid rgba(0,240,255,.25);border-radius:var(--radius);padding:20px 16px;min-height:100px;display:flex;flex-direction:column;justify-content:center}
+.tipo-tag{display:inline-block;font-size:.65rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--cyan);margin-bottom:8px;font-family:'Space Grotesk',sans-serif}
+.pergunta-texto{font-size:1.05rem;line-height:1.4;font-weight:600}
+.opcoes{display:flex;flex-direction:column;gap:10px}
+.opcao{background:var(--card);border:1.5px solid rgba(255,255,255,.12);border-radius:var(--radius);padding:16px;min-height:56px;font-size:.95rem;font-family:'Montserrat',sans-serif;font-weight:600;color:var(--text);text-align:left;cursor:pointer;transition:.15s}
+.opcao:active{transform:scale(.98)}
+.opcao.correto{border-color:var(--green);background:rgba(57,255,136,.15);color:var(--green);box-shadow:0 0 20px rgba(57,255,136,.4)}
+.opcao.errado{border-color:var(--orange);background:rgba(255,107,74,.15);color:var(--orange)}
+.opcao:disabled{cursor:default}
+.combo-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.combo-col{display:flex;flex-direction:column;gap:10px}
+.combo-item{background:var(--card);border:1.5px solid rgba(255,255,255,.12);border-radius:12px;padding:12px;min-height:52px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:.85rem;font-weight:600;cursor:pointer;transition:.15s}
+.combo-item.selected{border-color:var(--cyan);box-shadow:0 0 16px rgba(0,240,255,.5);background:rgba(0,240,255,.12)}
+.combo-item.matched{border-color:var(--green);background:rgba(57,255,136,.15);color:var(--green);cursor:default;opacity:.85}
+.combo-item.errado{border-color:var(--orange);background:rgba(255,107,74,.15)}
+.feedback{text-align:center;font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;padding:8px;min-height:32px;opacity:0;transition:.2s}
+.feedback.show{opacity:1}
+.feedback.ok{color:var(--green);text-shadow:0 0 12px rgba(57,255,136,.7)}
+.feedback.no{color:var(--orange)}
+.result-card{background:var(--card);border:1.5px solid rgba(0,240,255,.25);border-radius:var(--radius);padding:24px 16px;text-align:center;display:flex;flex-direction:column;gap:12px}
+.result-card .big{font-size:3rem;font-family:'Space Grotesk',sans-serif;font-weight:700}
+.result-card .stars-big{font-size:2rem;letter-spacing:4px}
+.result-card .lbl{color:var(--muted);font-size:.85rem}
+.back-bar{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.back-btn{background:transparent;border:none;color:var(--cyan);font-size:1.4rem;cursor:pointer;padding:8px;min-width:44px;min-height:44px}
+.particle{position:fixed;pointer-events:none;z-index:9999;width:8px;height:8px;border-radius:50%;animation:pop .7s ease-out forwards}
+@keyframes pop{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(0);opacity:0}}
+</style>
+</head>
+<body>
+<div id="app">
+<section id="tela-home" class="screen active">
+<div class="logo-wrap"><div class="sub">Aprenda · Jogue · Evolua</div><div class="logo-glow"><h1><span class="neon-cyan">Mestre</span><br><span class="neon-magenta">das Competências</span></h1></div></div>
+<div class="home-stats"><span class="stat-pill" id="home-nivel">Nível 1</span><span class="stat-pill" id="home-xp">0 XP</span><span class="stat-pill" id="home-estrelas">⭐ 0</span></div>
+<button class="btn primary" onclick="irParaMaterias()">▶ JOGAR</button>
+<button class="btn ghost small" onclick="resetarProgresso()">Resetar progresso</button>
+</section>
+<section id="tela-materias" class="screen">
+<div class="back-bar"><button class="back-btn" onclick="mostrarTela('tela-home')">←</button><h2>Escolha a matéria</h2></div>
+<div class="materia-grid" id="materia-grid"></div>
+</section>
+<section id="tela-fases" class="screen">
+<div class="back-bar"><button class="back-btn" onclick="irParaMaterias()">←</button><h2 id="fases-titulo">Fases</h2></div>
+<div class="fase-grid" id="fase-grid"></div>
+</section>
+<section id="tela-desafio" class="screen">
+<div class="back-bar"><button class="back-btn" onclick="sairDoDesafio()">←</button><div style="flex:1"><div class="top-bar"><span class="meta" id="desafio-materia">—</span><span class="meta" id="desafio-contador">1/6</span></div><div class="progress-track"><div class="progress-fill" id="desafio-progresso"></div></div></div></div>
+<div class="pergunta-box"><span class="tipo-tag" id="desafio-tipo">MÚLTIPLA ESCOLHA</span><div class="pergunta-texto" id="desafio-pergunta">—</div></div>
+<div class="opcoes" id="desafio-opcoes"></div>
+<div class="feedback" id="desafio-feedback"></div>
+</section>
+<section id="tela-resultado" class="screen">
+<h2 style="text-align:center">Fase concluída!</h2>
+<div class="result-card"><div class="lbl">Sua pontuação</div><div class="big neon-cyan" id="res-acertos">0/6</div><div class="stars-big" id="res-estrelas">☆☆☆</div><div class="lbl" id="res-xp">+0 XP</div></div>
+<button class="btn primary" onclick="jogarFaseNovamente()">🔁 Jogar de novo</button>
+<button class="btn magenta" onclick="irParaFases()">Próxima fase</button>
+<button class="btn ghost" onclick="irParaMaterias()">Voltar às matérias</button>
+</section>
+</div>
+<script>
+
+const BANCO={
+matematica:{nome:"Matemática",emoji:"🔢",desafios:[
+{tipo:"mc",pergunta:"Quanto é 7 × 8?",opcoes:["54","56","64","48"],correta:1},
+{tipo:"vf",pergunta:"A raiz quadrada de 81 é 9.",correta:true},
+{tipo:"mc",pergunta:"Quanto é 15% de 200?",opcoes:["15","20","30","25"],correta:2},
+{tipo:"cb",pergunta:"Ligue cada operação ao resultado:",pares:[["5²","25"],["2³","8"],["10÷2","5"]]},
+{tipo:"mc",pergunta:"Se x + 5 = 12, quanto vale x?",opcoes:["5","6","7","8"],correta:2},
+{tipo:"vf",pergunta:"Todo número par é divisível por 2.",correta:true},
+{tipo:"mc",pergunta:"Quanto é 3/4 em porcentagem?",opcoes:["25%","50%","75%","80%"],correta:2},
+{tipo:"cb",pergunta:"Ligue cada fração ao seu valor decimal:",pares:[["1/2","0,5"],["1/4","0,25"],["3/4","0,75"]]},
+{tipo:"vf",pergunta:"O número 1 é considerado primo.",correta:false},
+{tipo:"mc",pergunta:"Quanto é 12 ÷ 4 + 2?",opcoes:["3","5","6","8"],correta:1}
+]},
+historia:{nome:"História",emoji:"🏛️",desafios:[
+{tipo:"mc",pergunta:"Em que ano o Brasil proclamou a República?",opcoes:["1822","1889","1891","1900"],correta:1},
+{tipo:"vf",pergunta:"A Independência do Brasil ocorreu em 1822.",correta:true},
+{tipo:"mc",pergunta:"Quem foi o primeiro presidente do Brasil?",opcoes:["Getúlio Vargas","Deodoro da Fonseca","Dom Pedro II","Juscelino Kubitschek"],correta:1},
+{tipo:"cb",pergunta:"Ligue cada período ao seu marco:",pares:[["Brasil Colônia","1500-1822"],["Brasil Império","1822-1889"],["Brasil República","1889-hoje"]]},
+{tipo:"vf",pergunta:"A escravidão no Brasil foi abolida pela Lei Áurea em 1888.",correta:true},
+{tipo:"mc",pergunta:"Qual civilização construiu as pirâmides de Gizé?",opcoes:["Grega","Romana","Egípcia","Maia"],correta:2},
+{tipo:"mc",pergunta:"A Segunda Guerra Mundial terminou em qual ano?",opcoes:["1939","1942","1945","1950"],correta:2},
+{tipo:"cb",pergunta:"Ligue cada personagem à sua área:",pares:[["Dom Pedro I","Independência"],["Getúlio Vargas","Era Vargas"],["Tiradentes","Inconfidência"]]},
+{tipo:"vf",pergunta:"A Revolução Francesa começou em 1789.",correta:true},
+{tipo:"mc",pergunta:"Qual foi o primeiro nome dado ao Brasil pelos portugueses?",opcoes:["Brasil","Pindorama","Ilha de Vera Cruz","Nova Lusitânia"],correta:2}
+]},
+geografia:{nome:"Geografia",emoji:"🌎",desafios:[
+{tipo:"mc",pergunta:"Qual é o maior oceano do mundo?",opcoes:["Atlântico","Índico","Pacífico","Ártico"],correta:2},
+{tipo:"vf",pergunta:"A Amazônia é a maior floresta tropical do mundo.",correta:true},
+{tipo:"mc",pergunta:"Qual é a capital do Brasil?",opcoes:["Rio de Janeiro","São Paulo","Brasília","Salvador"],correta:2},
+{tipo:"cb",pergunta:"Ligue cada país à sua capital:",pares:[["Brasil","Brasília"],["Argentina","Buenos Aires"],["Chile","Santiago"]]},
+{tipo:"vf",pergunta:"O rio Nilo está localizado na Ásia.",correta:false},
+{tipo:"mc",pergunta:"Quantos continentes existem?",opcoes:["5","6","7","8"],correta:2},
+{tipo:"mc",pergunta:"Qual é o maior estado brasileiro em área?",opcoes:["Pará","Amazonas","Mato Grosso","Bahia"],correta:1},
+{tipo:"cb",pergunta:"Ligue cada região à sua característica:",pares:[["Norte","Amazônia"],["Nordeste","Sertão"],["Sul","Pampa"]]},
+{tipo:"vf",pergunta:"O Brasil está localizado na América do Sul.",correta:true},
+{tipo:"mc",pergunta:"Qual é o planeta mais próximo do Sol?",opcoes:["Vênus","Terra","Marte","Mercúrio"],correta:3}
+]},
+edfisica:{nome:"Ed. Física",emoji:"⚽",desafios:[
+{tipo:"mc",pergunta:"Quantos jogadores tem um time de futebol em campo?",opcoes:["9","10","11","12"],correta:2},
+{tipo:"vf",pergunta:"O vôlei é jogado com 6 jogadores por time em quadra.",correta:true},
+{tipo:"mc",pergunta:"Qual esporte usa raquete e peteca?",opcoes:["Tênis","Badminton","Squash","Ping-pong"],correta:1},
+{tipo:"cb",pergunta:"Ligue cada esporte ao seu equipamento:",pares:[["Futebol","Bola"],["Natação","Piscina"],["Ciclismo","Bicicleta"]]},
+{tipo:"vf",pergunta:"O basquete foi inventado nos Estados Unidos.",correta:true},
+{tipo:"mc",pergunta:"Quantos sets tem uma partida oficial de vôlei?",opcoes:["3","4","5","6"],correta:2},
+{tipo:"mc",pergunta:"Qual é o esporte mais popular do Brasil?",opcoes:["Vôlei","Basquete","Futebol","Natação"],correta:2},
+{tipo:"cb",pergunta:"Ligue cada modalidade ao ambiente:",pares:[["Natação","Água"],["Atletismo","Pista"],["Surfe","Mar"]]},
+{tipo:"vf",pergunta:"Alongamento antes do exercício ajuda a prevenir lesões.",correta:true},
+{tipo:"mc",pergunta:"Quantos jogadores tem um time de vôlei em quadra?",opcoes:["5","6","7","8"],correta:1}
+]},
+ciencias:{nome:"Ciências",emoji:"🔬",desafios:[
+{tipo:"mc",pergunta:"Qual é o símbolo químico da água?",opcoes:["CO2","H2O","O2","NaCl"],correta:1},
+{tipo:"vf",pergunta:"O corpo humano tem 206 ossos na fase adulta.",correta:true},
+{tipo:"mc",pergunta:"Qual é o maior órgão do corpo humano?",opcoes:["Fígado","Pulmão","Pele","Coração"],correta:2},
+{tipo:"cb",pergunta:"Ligue cada órgão à sua função:",pares:[["Coração","Bombear sangue"],["Pulmão","Respiração"],["Cérebro","Pensamento"]]},
+{tipo:"vf",pergunta:"A fotossíntese acontece nas plantas e produz oxigênio.",correta:true},
+{tipo:"mc",pergunta:"Qual é o planeta conhecido como Planeta Vermelho?",opcoes:["Vênus","Júpiter","Marte","Saturno"],correta:2},
+{tipo:"mc",pergunta:"Qual é o estado físico da água a 0°C?",opcoes:["Líquido","Sólido","Gasoso","Plasma"],correta:1},
+{tipo:"cb",pergunta:"Ligue cada animal à sua classe:",pares:[["Cachorro","Mamífero"],["Sapo","Anfíbio"],["Águia","Ave"]]},
+{tipo:"vf",pergunta:"O som viaja mais rápido que a luz.",correta:false},
+{tipo:"mc",pergunta:"Qual gás as plantas absorvem na fotossíntese?",opcoes:["Oxigênio","Nitrogênio","Gás carbônico","Hidrogênio"],correta:2}
+]},
+artes:{nome:"Artes",emoji:"🎨",desafios:[
+{tipo:"mc",pergunta:"Quem pintou a Mona Lisa?",opcoes:["Van Gogh","Picasso","Leonardo da Vinci","Michelangelo"],correta:2},
+{tipo:"vf",pergunta:"O cubismo é um movimento artístico do século XX.",correta:true},
+{tipo:"mc",pergunta:"Quais são as cores primárias?",opcoes:["Verde, roxo, laranja","Azul, vermelho, amarelo","Preto, branco, cinza","Rosa, azul, verde"],correta:1},
+{tipo:"cb",pergunta:"Ligue cada artista à sua obra:",pares:[["Van Gogh","Noite Estrelada"],["Monet","Impressionismo"],["Picasso","Guernica"]]},
+{tipo:"vf",pergunta:"A arte renascentista valorizava a perspectiva e o realismo.",correta:true},
+{tipo:"mc",pergunta:"Qual movimento artístico é conhecido pelas formas geométricas?",opcoes:["Barroco","Cubismo","Romantismo","Realismo"],correta:1},
+{tipo:"mc",pergunta:"O que é a Semana de Arte Moderna de 1922?",opcoes:["Uma exposição em Paris","Um evento no Brasil","Uma peça de teatro","Uma escultura"],correta:1},
+{tipo:"cb",pergunta:"Ligue cada cor ao seu complemento:",pares:[["Azul","Laranja"],["Vermelho","Verde"],["Amarelo","Roxo"]]},
+{tipo:"vf",pergunta:"A música é considerada uma forma de arte.",correta:true},
+{tipo:"mc",pergunta:"Qual desses é um instrumento de corda?",opcoes:["Flauta","Violão","Tambor","Piano"],correta:1}
+]},
+portugues:{nome:"Português",emoji:"📖",desafios:[
+{tipo:"mc",pergunta:"Qual é o plural de 'cidadão'?",opcoes:["Cidadões","Cidadãos","Cidadães","Cidadans"],correta:1},
+{tipo:"vf",pergunta:"'Mas' e 'mais' têm significados diferentes.",correta:true},
+{tipo:"mc",pergunta:"Qual palavra é um substantivo?",opcoes:["Correr","Bonito","Cachorro","Rapidamente"],correta:2},
+{tipo:"cb",pergunta:"Ligue cada figura de linguagem ao exemplo:",pares:[["Metáfora","Ele é um leão"],["Hipérbole","Chorei rios"],["Personificação","O sol sorriu"]]},
+{tipo:"vf",pergunta:"O sujeito é o termo que pratica a ação do verbo.",correta:true},
+{tipo:"mc",pergunta:"Qual é o antônimo de 'alegria'?",opcoes:["Felicidade","Tristeza","Amor","Paz"],correta:1},
+{tipo:"mc",pergunta:"Qual frase está correta?",opcoes:["Eu vi ele ontem","Eu o vi ontem","Eu vi-lhe ontem","Eu viu ele ontem"],correta:1},
+{tipo:"cb",pergunta:"Ligue cada gênero textual à sua característica:",pares:[["Poema","Versos"],["Notícia","Fato"],["Receita","Passos"]]},
+{tipo:"vf",pergunta:"A crase é a fusão de duas vogais iguais.",correta:true},
+{tipo:"mc",pergunta:"Qual é o coletivo de 'peixes'?",opcoes:["Cardume","Alcateia","Manada","Enxame"],correta:0}
+]}
+};
+const MATERIAS_ORDEM=["matematica","historia","geografia","edfisica","ciencias","artes","portugues"];
+const TOTAL_FASES=5,DESAFIOS_POR_FASE=6,XP_ACERTO=10,XP_FASE=50,XP_NIVEL=500;
+const STORAGE_KEY="mestre_competencias_v1";
+let estado=carregarEstado(),sessao=null,materiaAtual=null;
+function estadoPadrao(){const st={xp:0,estrelas:{},materias:{}};MATERIAS_ORDEM.forEach(m=>{st.materias[m]={fases:[]};for(let f=0;f<TOTAL_FASES;f++)st.materias[m].fases.push({estrelas:0,concluida:false})});return st}
+function carregarEstado(){try{const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return estadoPadrao();const st=JSON.parse(raw);if(!st.materias)return estadoPadrao();return st}catch(e){return estadoPadrao()}}
+function salvarEstado(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(estado))}catch(e){}}
+function resetarProgresso(){if(confirm("Apagar todo o progresso?")){estado=estadoPadrao();salvarEstado();atualizarHomeStats();alert("Progresso resetado!")}}
+function mostrarTela(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");window.scrollTo(0,0)}
+function irParaMaterias(){renderMaterias();mostrarTela("tela-materias")}
+function irParaFases(mat){sessao=null;if(mat)materiaAtual=mat;renderFases(materiaAtual);mostrarTela("tela-fases")}
+function atualizarHomeStats(){const nivel=Math.floor(estado.xp/XP_NIVEL)+1;document.getElementById("home-nivel").textContent="Nível "+nivel;document.getElementById("home-xp").textContent=estado.xp+" XP";let t=0;Object.values(estado.estrelas).forEach(v=>t+=v);document.getElementById("home-estrelas").textContent="⭐ "+t}
+function renderMaterias(){const grid=document.getElementById("materia-grid");grid.innerHTML="";MATERIAS_ORDEM.forEach(m=>{const info=BANCO[m];const fases=estado.materias[m].fases;const c=fases.filter(f=>f.concluida).length;const card=document.createElement("div");card.className="materia-card";card.innerHTML=`<div class="emoji">${info.emoji}</div><div><div class="nome">${info.nome}</div><div class="prog">${c}/${TOTAL_FASES} fases</div></div>`;card.onclick=()=>irParaFases(m);grid.appendChild(card)})}
+function renderFases(mat){document.getElementById("fases-titulo").textContent=BANCO[mat].nome;const grid=document.getElementById("fase-grid");grid.innerHTML="";const fases=estado.materias[mat].fases;for(let i=0;i<TOTAL_FASES;i++){const f=fases[i];const lib=i===0||fases[i-1].concluida;const card=document.createElement("div");card.className="fase-card"+(lib?"":" locked");const stars="⭐".repeat(f.estrelas)+"☆".repeat(3-f.estrelas);card.innerHTML=`<div class="info"><div class="fname">Fase ${i+1}</div><div class="stars">${f.concluida?stars:"—"}</div></div><div class="lock">${lib?"▶":"🔒"}</div>`;if(lib)card.onclick=()=>iniciarFase(mat,i);grid.appendChild(card)}}
+function iniciarFase(mat,faseIdx){const matInfo=BANCO[mat];let pool=[...matInfo.desafios];for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]]}const desafios=[];for(let i=0;i<DESAFIOS_POR_FASE;i++)desafios.push(pool[i%pool.length]);sessao={mat,faseIdx,desafios,idx:0,acertos:0,respondeu:false,comboSelected:null,comboMatched:0};mostrarTela("tela-desafio");renderDesafio()}
+function sairDoDesafio(){sessao=null;if(materiaAtual)irParaFases(materiaAtual);else irParaMaterias()}
+function renderDesafio(){const s=sessao;const d=s.desafios[s.idx];document.getElementById("desafio-materia").textContent=BANCO[s.mat].nome+" · Fase "+(s.faseIdx+1);document.getElementById("desafio-contador").textContent=(s.idx+1)+"/"+DESAFIOS_POR_FASE;document.getElementById("desafio-progresso").style.width=((s.idx)/DESAFIOS_POR_FASE*100)+"%";const tipoTag=document.getElementById("desafio-tipo");const perg=document.getElementById("desafio-pergunta");const opcoes=document.getElementById("desafio-opcoes");const fb=document.getElementById("desafio-feedback");fb.textContent="";fb.className="feedback";opcoes.innerHTML="";s.respondeu=false;s.comboSelected=null;s.comboMatched=0;perg.textContent=d.pergunta;
+if(d.tipo==="mc"){tipoTag.textContent="MÚLTIPLA ESCOLHA";d.opcoes.forEach((op,i)=>{const b=document.createElement("button");b.className="opcao";b.textContent=op;b.onclick=()=>responderMC(b,i,d.correta);opcoes.appendChild(b)})}
+else if(d.tipo==="vf"){tipoTag.textContent="VERDADEIRO OU FALSO";["Verdadeiro","Falso"].forEach((op,i)=>{const b=document.createElement("button");b.className="opcao";b.textContent=op;b.onclick=()=>responderVF(b,i===0,d.correta);opcoes.appendChild(b)})}
+else if(d.tipo==="cb"){tipoTag.textContent="COMBINAÇÃO";montarCombo(d,opcoes)}}
+function responderMC(btn,escolha,correta){if(sessao.respondeu)return;sessao.respondeu=true;const botoes=document.querySelectorAll("#desafio-opcoes .opcao");botoes.forEach((b,i)=>{b.disabled=true;if(i===correta)b.classList.add("correto");else if(i===escolha)b.classList.add("errado")});if(escolha===correta){sessao.acertos++;mostrarFeedback("✔ Acertou!",true);explodirParticulas(btn)}else mostrarFeedback("✘ Quase! A resposta certa está em verde.",false);setTimeout(proximoDesafio,1200)}
+function responderVF(btn,escolhaBool,corretaBool){if(sessao.respondeu)return;sessao.respondeu=true;const botoes=document.querySelectorAll("#desafio-opcoes .opcao");const corretaIdx=corretaBool?0:1;const escolhaIdx=escolhaBool?0:1;botoes.forEach((b,i)=>{b.disabled=true;if(i===corretaIdx)b.classList.add("correto");else if(i===escolhaIdx)b.classList.add("errado")});if(escolhaBool===corretaBool){sessao.acertos++;mostrarFeedback("✔ Acertou!",true);explodirParticulas(btn)}else mostrarFeedback("✘ Quase!",false);setTimeout(proximoDesafio,1200)}
+function montarCombo(d,container){const esq=d.pares.map(p=>p[0]);const dir=d.pares.map(p=>p[1]);for(let i=dir.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[dir[i],dir[j]]=[dir[j],dir[i]]}const wrap=document.createElement("div");wrap.className="combo-grid";const colL=document.createElement("div");colL.className="combo-col";const colR=document.createElement("div");colR.className="combo-col";const selL={v:null};esq.forEach(txt=>{const el=document.createElement("div");el.className="combo-item";el.textContent=txt;el.dataset.lado="L";el.dataset.valor=txt;el.onclick=()=>selecionarCombo(el,"L",selL);colL.appendChild(el)});dir.forEach(txt=>{const el=document.createElement("div");el.className="combo-item";el.textContent=txt;el.dataset.lado="R";el.dataset.valor=txt;el.onclick=()=>selecionarCombo(el,"R",selL);colR.appendChild(el)});wrap.appendChild(colL);wrap.appendChild(colR);container.appendChild(wrap);sessao._comboSelL=selL;sessao._comboPares=d.pares;sessao._comboTotal=d.pares.length}
+function selecionarCombo(el,lado,selL){if(el.classList.contains("matched"))return;if(lado==="L"){document.querySelectorAll('.combo-item[data-lado="L"].selected').forEach(x=>x.classList.remove("selected"));el.classList.add("selected");selL.v=el;return}if(!selL.v)return;const valL=selL.v.dataset.valor;const valR=el.dataset.valor;const par=sessao._comboPares.find(p=>p[0]===valL);if(par&&par[1]===valR){selL.v.classList.remove("selected");selL.v.classList.add("matched");el.classList.add("matched");selL.v=null;sessao.comboMatched++;if(sessao.comboMatched>=sessao._comboTotal){sessao.respondeu=true;sessao.acertos++;mostrarFeedback("✔ Tudo certo!",true);setTimeout(proximoDesafio,1000)}else{mostrarFeedback("✔ Par certo!",true)}}else{el.classList.add("errado");setTimeout(()=>el.classList.remove("errado"),400);mostrarFeedback("✘ Tente outro par.",false)}}
+function mostrarFeedback(txt,ok){const fb=document.getElementById("desafio-feedback");fb.textContent=txt;fb.className="feedback show "+(ok?"ok":"no")}
+function explodirParticulas(baseEl){const rect=baseEl.getBoundingClientRect();const cx=rect.left+rect.width/2;const cy=rect.top+rect.height/2;const cores=["#00F0FF","#B4FF39","#FF2E9A","#A855F7","#39FF88"];for(let i=0;i<14;i++){const p=document.createElement("div");p.className="particle";p.style.left=cx+"px";p.style.top=cy+"px";p.style.background=cores[i%cores.length];p.style.boxShadow="0 0 10px "+cores[i%cores.length];const ang=Math.random()*Math.PI*2;const dist=40+Math.random()*50;p.style.setProperty("--dx",Math.cos(ang)*dist+"px");p.style.setProperty("--dy",Math.sin(ang)*dist+"px");document.body.appendChild(p);setTimeout(()=>p.remove(),750)}}
+function proximoDesafio(){sessao.idx++;if(sessao.idx>=DESAFIOS_POR_FASE){finalizarFase()}else{renderDesafio()}}
+function finalizarFase(){const s=sessao;const acertos=s.acertos;let estrelas=0;if(acertos===DESAFIOS_POR_FASE)estrelas=3;else if(acertos===DESAFIOS_POR_FASE-1)estrelas=2;else if(acertos===DESAFIOS_POR_FASE-2)estrelas=1;const fase=estado.materias[s.mat].fases[s.faseIdx];if(estrelas>fase.estrelas)fase.estrelas=estrelas;fase.concluida=true;const xpGanha=acertos*XP_ACERTO+XP_FASE;estado.xp+=xpGanha;salvarEstado();atualizarHomeStats();document.getElementById("res-acertos").textContent=acertos+"/"+DESAFIOS_POR_FASE;document.getElementById("res-estrelas").textContent="⭐".repeat(estrelas)+"☆".repeat(3-estrelas);document.getElementById("res-xp").textContent="+"+xpGanha+" XP";sessao=null;mostrarTela("tela-resultado")}
+function jogarFaseNovamente(){if(!materiaAtual){irParaMaterias();return}const fases=estado.materias[materiaAtual].fases;let idx=fases.length-1;for(let i=0;i<fases.length;i++){if(!fases[i].concluida){idx=Math.max(0,i-1);break}}iniciarFase(materiaAtual,idx)}
+atualizarHomeStats();
+</script>
+</body>
+</html>
